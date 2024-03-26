@@ -6,21 +6,26 @@ using UnityEngine.UI;
 
 public class UI_CharacterStat : MonoBehaviour
 {
-    protected Character Owner { get; private set; }
-    
-
-    [Header("스태미나 슬라이더 UI")]
-    public Slider StaminaSliderUI;
+    public static UI_CharacterStat Instance { get; private set; }
+    public Character MyCharacter;
+   
     [Header("체력 슬라이더 UI")]
     public Slider HealthSliderUI;
+    [Header("스태미나 슬라이더 UI")]
+    public Slider StaminaSliderUI;
 
     private void Awake()
     {
-        Owner = GetComponent<Character>();
+        Instance = this;
     }
+
     private void Update()
     {
-        HealthSliderUI.value = (float)Owner.Stat.Health / (float)Owner.Stat.MaxHealth;
-        StaminaSliderUI.value = Owner.Stat.Stamina / Owner.Stat.MaxStamina;
+        if(MyCharacter == null)
+        {
+            return;
+        }
+        HealthSliderUI.value = (float)MyCharacter.Stat.Health / MyCharacter.Stat.MaxHealth;
+        StaminaSliderUI.value = MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
     }
 }

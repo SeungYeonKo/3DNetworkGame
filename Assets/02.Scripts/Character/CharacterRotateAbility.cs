@@ -1,3 +1,4 @@
+using Cinemachine;
 using UnityEngine;
 
 public class CharacterRotateAbility : CharacterAbility
@@ -7,6 +8,14 @@ public class CharacterRotateAbility : CharacterAbility
     private float _mx;
     private float _my;
 
+    private void Start()
+    {
+        if (_owner.PhotonView.IsMine)
+        {
+            GameObject.FindWithTag("FollowCamera").GetComponent<CinemachineVirtualCamera>().Follow = CameraRoot;
+        }
+    }
+
     private void Update()
     {
         // 순서
@@ -15,8 +24,8 @@ public class CharacterRotateAbility : CharacterAbility
         float mouseY = Input.GetAxis("Mouse Y");
 
         // 2. 회전 값을 마우스 입력에 따라 미리 누적한다
-        _mx += mouseX * Owner.Stat.RotationSpeed * Time.deltaTime;
-        _my += mouseY * Owner.Stat.RotationSpeed * Time.deltaTime;
+        _mx += mouseX * _owner.Stat.RotationSpeed * Time.deltaTime;
+        _my += mouseY * _owner.Stat.RotationSpeed * Time.deltaTime;
         _my = Mathf.Clamp(_my, -90f, 90f);
 
         // 3. 카메라(TPS)와 캐릭터를 회전 방향으로 회전시킨다
