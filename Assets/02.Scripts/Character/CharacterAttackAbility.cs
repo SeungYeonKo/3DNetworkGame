@@ -15,7 +15,7 @@ public class CharacterAttackAbility : CharacterAbility
 
     private Animator _animator;
     private float _attackTimer;
-
+    public float StaminaConsumeSpeed = 20f;
 
     void Start()
     {
@@ -25,7 +25,9 @@ public class CharacterAttackAbility : CharacterAbility
     void Update()
     {
         _attackTimer += Time.deltaTime;
-        if (Input.GetMouseButtonDown(0) && _attackTimer >= Owner.Stat.AttackCoolTime)
+
+        bool haveStamina = Owner.Stat.Stamina >= Owner.Stat.AttackConsumeStamina;
+        if (Input.GetMouseButtonDown(0) && _attackTimer >= Owner.Stat.AttackCoolTime && haveStamina)
         {
             _attackTimer = 0;
             _animator.SetTrigger($"Attack{Random.Range(1, 4)}");

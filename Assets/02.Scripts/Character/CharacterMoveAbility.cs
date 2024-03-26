@@ -2,6 +2,7 @@ using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -10,12 +11,13 @@ public class CharacterMoveAbility : CharacterAbility
     // 목표: [W],[A],[S],[D] 및 방향키를 누르면 캐릭터를 그 뱡향으로 이동시키고 싶다.
     private CharacterController _characterController;
     private Animator _animator;
-    
 
     private void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
+        Owner.Stat.Health = Owner.Stat.MaxHealth;
+        Owner.Stat.Stamina = Owner.Stat.MaxStamina;
     }
 
     private void Update()
@@ -32,10 +34,23 @@ public class CharacterMoveAbility : CharacterAbility
 
         _animator.SetFloat("Move", dir.magnitude);
 
-        // 4. 중력 적용하세요.
+        // 3. 중력 적용하세요.
         dir.y = -1f;
 
-        // 3. 이동속도에 따라 그 방향으로 이동한다.
-        _characterController.Move(dir * (Owner.Stat.MoveSpeed * Time.deltaTime));
+        float moveSpeed = Owner.Stat.MoveSpeed;
+       
+
+        if (Input.GetKey(KeyCode.LeftShift) && Owner.Stat.Stamina > 0 )
+        {
+            moveSpeed = Owner.Stat.RunSpeed;
+            Owner.Stat.Stamina -= Time.deltaTime * Owner.Stat.RunConsumeStamina;
+        }
+        else
+        {
+            Owner.Stat.Stamina += Time.deltaTime * Owner.Stat.RecoveryStamina;
+        }
+
+        // 4. 이동속도에 따라 그 방향으로 이동한다.
+        _characterController.Move(dir * (moveSpeed * Time.deltaTime));
     }
 }
