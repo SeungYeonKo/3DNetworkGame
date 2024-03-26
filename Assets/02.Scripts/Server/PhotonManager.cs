@@ -22,6 +22,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks      // PUN의 다양한 
 
         // 4. 연결한다
         PhotonNetwork.ConnectUsingSettings();
+
+        PhotonNetwork.SendRate            = 30;
+        PhotonNetwork.SerializationRate = 30;
     }
 
     // 포톤 서버에 접속 후 호출되는 콜백 함수
