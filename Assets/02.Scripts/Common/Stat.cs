@@ -6,6 +6,8 @@ using UnityEngine;
 [Serializable]  //직렬화
 public class Stat
 {
+    public int Damage;
+
     public int    Health;
     public int    MaxHealth;
 

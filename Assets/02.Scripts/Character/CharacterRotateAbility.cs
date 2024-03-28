@@ -4,6 +4,7 @@ using UnityEngine;
 public class CharacterRotateAbility : CharacterAbility
 {
     public Transform CameraRoot;
+    private MiniMapCamera _miniMapCamera;
 
     private float _mx;
     private float _my;
@@ -12,6 +13,8 @@ public class CharacterRotateAbility : CharacterAbility
     {
         if (_owner.PhotonView.IsMine)
         {
+            _miniMapCamera = GameObject.FindWithTag("MinimapCamera").GetComponent<MiniMapCamera>();
+            _miniMapCamera.Target = transform;
             GameObject.FindWithTag("FollowCamera").GetComponent<CinemachineVirtualCamera>().Follow = CameraRoot;
         }
     }

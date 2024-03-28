@@ -5,11 +5,13 @@ TagManager:
   serializedVersion: 2
   tags:
   - FollowCamera
+  - FxTemporaire
+  - MinimapCamera
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Character
   - Water
   - UI
   - 
