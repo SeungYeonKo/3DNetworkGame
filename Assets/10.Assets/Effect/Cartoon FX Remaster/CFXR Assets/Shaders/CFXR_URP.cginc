@@ -60,7 +60,9 @@ half4 unity_LightIndices[2];
 // Lighting.hlsl
 // ================================================================================================================================
 
-// Abstraction over Light shading data.
+// Abstr
+
+over Light shading data.
 struct Light
 {
     half3   direction;

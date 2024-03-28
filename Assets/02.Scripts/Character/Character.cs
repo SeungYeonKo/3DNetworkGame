@@ -63,7 +63,8 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     public void Damaged(int damage)
     {
         Stat.Health -= damage;
-        if(PhotonView.IsMine)
+        GetComponent<CharacterShakeAbility>().Shake();
+        if (PhotonView.IsMine)
         {
             CinemachineImpulseSource impulseSource;
             if (TryGetComponent<CinemachineImpulseSource>(out impulseSource))
@@ -71,7 +72,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
                 float strength = 0.2f;
                 impulseSource.GenerateImpulseWithVelocity(UnityEngine.Random.insideUnitSphere.normalized * strength);
             }
-            GetComponent<CharacterShakeAbility>().Shake();
             UI_DamagedEffect.Instance.Show(0.5f);
         } 
     }

@@ -23,7 +23,9 @@ public class CharacterShakeAbility : CharacterAbility
         while (elapsedTime <= Duration)
         {
             elapsedTime += Time.deltaTime;
-            TargetTransform.localPosition += Random.insideUnitSphere.normalized * Strength;
+            Vector3 randomPosition = Random.insideUnitSphere.normalized * Strength;
+            randomPosition.y = startPosition.y;
+            TargetTransform.localPosition = randomPosition;
             yield return null;
         }
         TargetTransform.localPosition = startPosition;

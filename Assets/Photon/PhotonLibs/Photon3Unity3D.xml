@@ -414,7 +414,9 @@
         </member>
         <member name="M:ExitGames.Client.Photon.IPhotonPeerListener.OnStatusChanged(ExitGames.Client.Photon.StatusCode)">
              <summary>
-             OnStatusChanged is called to let the game know when asynchronous actions finished or when errors happen.
+             OnStatusChanged is called to let the game know when asynchronous 
+			 
+s finished or when errors happen.
              </summary>
              <remarks>
              Not all of the many StatusCode values will apply to your game. Example: If you don't use encryption,
