@@ -20,7 +20,7 @@ public class CharacterCanvasAbility : CharacterAbility
     private void Update()
     {
         // Todo. 빌보드 구현
-        transform.forward = Camera.main.transform.forward;
+        MyCanvas.transform.forward = Camera.main.transform.forward;
 
         HealthSliderUI.value = (float)_owner.Stat.Health / _owner.Stat.MaxHealth;
         StaminaSliderUI.value = _owner.Stat.Stamina / _owner.Stat.MaxStamina;

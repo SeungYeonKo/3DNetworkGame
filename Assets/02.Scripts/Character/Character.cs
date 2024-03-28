@@ -9,16 +9,24 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CharacterRotateAbility))]
 [RequireComponent(typeof(CharacterAttackAbility))]
 [RequireComponent(typeof(CharacterShakeAbility))]
+[RequireComponent (typeof(Animator))]
 
 public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
     public PhotonView PhotonView { get; private set; }
-    public Stat Stat;
+    public Stat Stat; 
+    private Animator _animator; // Animator 컴포넌트를 참조하기 위한 변수
+    private CharacterMoveAbility _moveAbility;
+    private CharacterAttackAbility _attackAbility;
+    private CharacterRotateAbility _rotateAbility;
 
     private void Awake()
     {
+        _animator = GetComponent<Animator>();
         Stat.Init();
         PhotonView = GetComponent<PhotonView>();
+        _moveAbility = GetComponent<CharacterMoveAbility>(); // 이동 능력 컴포넌트 참조
+        _attackAbility = GetComponent<CharacterAttackAbility>(); // 공격 능력 컴포넌트 참조
 
         if (PhotonView.IsMine)
         {
@@ -74,5 +82,30 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
             }
             UI_DamagedEffect.Instance.Show(0.5f);
         } 
+        if(Stat.Health <= 0)
+        {
+            Die();
+        }
     }
+
+    public void Die()
+    {
+            // 죽는 애니메이션 재생
+            _animator.SetTrigger("Die");
+
+            // 이동 및 공격 기능 비활성화
+            if (_moveAbility != null)
+            {
+                _moveAbility.enabled = false; // 이동 능력 비활성화
+            }
+            if (_attackAbility != null)
+            {
+                _attackAbility.enabled = false; // 공격 능력 비활성화
+            }
+            if(_rotateAbility != null)
+            {
+                _rotateAbility.enabled = false;
+            }
+            // 바닥에 떨어지거나 죽으면 5초 후 체력/스태미나 MAX와  함께 랜덤한 위치에 리스폰
+        }
 }

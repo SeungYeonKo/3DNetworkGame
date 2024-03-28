@@ -1188,7 +1188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30ee81b6eef60d44ba9d47e86d259d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MyCanvas: {fileID: 0}
+  MyCanvas: {fileID: 5769768747394912679}
   NicknameTextUI: {fileID: 4920390770489718257}
   HealthSliderUI: {fileID: 7885350977403781919}
   StaminaSliderUI: {fileID: 4909890874024374827}
@@ -2519,13 +2519,14 @@ GameObject:
   - component: {fileID: 1439575195754441738}
   - component: {fileID: 2346234891905855571}
   - component: {fileID: -3520084988993999959}
+  - component: {fileID: 4096389398513654035}
   - component: {fileID: 5078682010656885115}
   - component: {fileID: 6711067681670342282}
   - component: {fileID: 8297320787018324805}
-  - component: {fileID: 4096389398513654035}
   - component: {fileID: 1071335796141109075}
   - component: {fileID: 7048469148254955199}
   - component: {fileID: 7875691034392509909}
+  - component: {fileID: 8732798645023093238}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -2670,6 +2671,31 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!114 &4096389398513654035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6851397874782736743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d566197677570784f91ba25f4ae36199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Stat:
+    Damage: 30
+    Health: 100
+    MaxHealth: 100
+    Stamina: 100
+    MaxStamina: 100
+    RunConsumeStamina: 10
+    RecoveryStamina: 5
+    MoveSpeed: 7
+    RunSpeed: 20
+    RotationSpeed: 200
+    AttackCoolTime: 1
+    AttackConsumeStamina: 20
 --- !u!114 &5078682010656885115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2708,31 +2734,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   WeaponCollider: {fileID: 6463310603034054802}
---- !u!114 &4096389398513654035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6851397874782736743}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d566197677570784f91ba25f4ae36199, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Stat:
-    Damage: 5
-    Health: 100
-    MaxHealth: 100
-    Stamina: 100
-    MaxStamina: 100
-    RunConsumeStamina: 10
-    RecoveryStamina: 5
-    MoveSpeed: 7
-    RunSpeed: 20
-    RotationSpeed: 200
-    AttackCoolTime: 1
-    AttackConsumeStamina: 20
 --- !u!225 &1071335796141109075
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2813,6 +2814,22 @@ MonoBehaviour:
   TargetTransform: {fileID: 7519388769441528819}
   Duration: 0.5
   Strength: 0.2
+--- !u!114 &8732798645023093238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6851397874782736743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30ee81b6eef60d44ba9d47e86d259d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MyCanvas: {fileID: 5769768747394912679}
+  NicknameTextUI: {fileID: 4920390770489718257}
+  HealthSliderUI: {fileID: 7885350977403781919}
+  StaminaSliderUI: {fileID: 4909890874024374827}
 --- !u!1 &6952708643556205967
 GameObject:
   m_ObjectHideFlags: 0
