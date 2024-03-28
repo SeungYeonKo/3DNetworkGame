@@ -15,6 +15,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
     public PhotonView PhotonView { get; private set; }
     public Stat Stat; 
+
     private Animator _animator; // Animator 컴포넌트를 참조하기 위한 변수
     private CharacterMoveAbility _moveAbility;
     private CharacterAttackAbility _attackAbility;
