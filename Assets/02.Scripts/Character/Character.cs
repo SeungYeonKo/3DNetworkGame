@@ -107,6 +107,28 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
             {
                 _rotateAbility.enabled = false;
             }
-            // 바닥에 떨어지거나 죽으면 5초 후 체력/스태미나 MAX와  함께 랜덤한 위치에 리스폰
-        }
+        // 바닥에 떨어지거나 죽으면 5초 후 체력/스태미나 MAX와  함께 랜덤한 위치에 리스폰
+        //StartCoroutine(ReSpawn_Coroutine());
+    }
+
+ /*   private IEnumerator ReSpawn_Coroutine()
+    {
+        yield return new WaitForSeconds(5f);
+
+        Stat.Health = Stat.MaxHealth;
+        Stat.Stamina = Stat.MaxStamina;
+
+        // 랜덤 스폰 포인트 찾기
+        var spawnPoints = PhotonManager.Instance.RandomSpawnPoints;
+        var randomSpawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)].position;
+
+        // 캐릭터를 랜덤 스폰 포인트로 이동
+        transform.position = randomSpawnPoint;
+
+        if (_moveAbility != null) _moveAbility.enabled = true;
+        if (_attackAbility != null) _attackAbility.enabled = true;
+        if (_rotateAbility != null) _rotateAbility.enabled = true;
+
+        _animator.ResetTrigger("Die");
+    }*/
 }

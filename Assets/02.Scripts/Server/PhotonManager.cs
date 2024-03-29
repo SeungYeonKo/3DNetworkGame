@@ -8,11 +8,16 @@ using System.Collections.Generic;
 // 역할: 포톤 서버 연결 관리자
 public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서버 이벤트(콜백 함수)를 받는다.
 {
-    public List<Transform> RandomSpawnPoints;       
+    public static PhotonManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
-        InitializeSpawnPoints();
+        //InitializeSpawnPoints();
         // 목적: 연결을 하고 싶다.
         // 순서:
         // 1. 게임 버전을 설정한다.
@@ -90,23 +95,11 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         Debug.Log($"PlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}");
         Debug.Log($"MaxCount: {PhotonNetwork.CurrentRoom.MaxPlayers}");
 
-        // 캐릭터를 랜덤한 위치에서 생성
-        if (RandomSpawnPoints.Count > 0)
-        {
-            int index = UnityEngine.Random.Range(0, RandomSpawnPoints.Count);
-            PhotonNetwork.Instantiate(nameof(Character), RandomSpawnPoints[index].position, Quaternion.identity);
-        }
-        else
-        {
-            // 만약 사용 가능한 스폰 포인트가 없다면, (0, 0, 0)에서 생성
-            PhotonNetwork.Instantiate(nameof(Character), Vector3.zero, Quaternion.identity);
-        }
+        Vector3 randomAngle = new Vector3(0, UnityEngine.Random.Range(0,360), 0);
+        PhotonNetwork.Instantiate(nameof(Character), BattleScene.Instance.GetRandomSpawnPoint(), Quaternion.Euler(randomAngle));
     }
-    private void InitializeSpawnPoints()
-    {
-        // 여기서 spawnPoints 리스트를 초기화하거나, 필요한 경우 빈 게임 오브젝트를 찾아 리스트에 추가하는 로직을 구현합니다.
-        // 예: GameObject.FindGameObjectsWithTag("SpawnPoint").ToList().ConvertAll(item => item.transform);
-    }
+
+   
 
     // 방 생성에 실패했을 때 호출되는 콜백 함수
     public override void OnCreateRoomFailed(short returnCode, string message)
