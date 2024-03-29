@@ -85,7 +85,7 @@ public class CharacterAttackAbility : CharacterAbility
                 // 피격 이벤트 생성( 내 컴퓨터에서만 생성=GameObject.Instantiate ... / 모든 컴퓨에서 생성 = PhotonNetwork.Instantiate ...)
                 Vector3 hitPosition = (transform.position + other.transform.position) / 2f + new Vector3(0f, 1f);  // 내 위치와 상대의 위치를 평균내서 대략적인 위치를 구함
                 PhotonNetwork.Instantiate("HitEffect", hitPosition, Quaternion.identity);
-                photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage);
+                photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage, _owner.PhotonView.OwnerActorNr);
             }
             //damagedAbleObject.Damaged(_owner.Stat.Damage);
         }
