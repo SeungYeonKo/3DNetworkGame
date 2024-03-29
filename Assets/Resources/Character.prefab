@@ -2662,6 +2662,9 @@ MonoBehaviour:
   - Type: 9
     SynchronizeType: 0
     Name: Motion1
+  - Type: 9
+    SynchronizeType: 0
+    Name: Jump
   m_SynchronizeLayers:
   - SynchronizeType: 1
     LayerIndex: 0
@@ -2706,6 +2709,7 @@ MonoBehaviour:
     RotationSpeed: 200
     AttackCoolTime: 1
     AttackConsumeStamina: 20
+    JumpPower: 4
 --- !u!114 &5078682010656885115
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,6 +17,10 @@ public class CharacterMotionAbility : CharacterAbility
         {
             _owner.PhotonView.RPC(nameof(PlayMotion), RpcTarget.All, 1);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            _owner.PhotonView.RPC(nameof(PlayMotion), RpcTarget.All, 2);
+        }
     }
 
     [PunRPC]

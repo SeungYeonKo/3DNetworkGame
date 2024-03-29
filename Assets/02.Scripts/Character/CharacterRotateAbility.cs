@@ -38,8 +38,12 @@ public class CharacterRotateAbility : CharacterAbility
         // 3. 카메라(TPS)와 캐릭터를 회전 방향으로 회전시킨다
         transform.eulerAngles = new Vector3(0, _mx, 0f);
         CameraRoot.localEulerAngles = new Vector3(-_my, 0, 0f);
+    }
 
-        // 4. 시네머신
-
+    // 랜덤하게 생성될 때 시점도 랜덤하게
+    public void SetRandomRotation()
+    {
+        _mx = UnityEngine.Random.Range(0, 360);
+        _my = 0;
     }
 }

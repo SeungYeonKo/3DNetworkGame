@@ -10,16 +10,18 @@ public class CharacterMoveAbility : CharacterAbility
     private CharacterController _characterController;
     private Animator _animator;
 
-    private void Start()
+    protected  override void Awake()    //characterAbility에서 이미 사용중이어서 override를 써줘서 재정의
     {
+        base.Awake();   // characterAbility에 있는 awake에 awake를 추가
+
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
     }
 
-   
+
     private void Update()
     {
-       if(_owner.State == State.Death || !_owner.PhotonView.IsMine)
+        if (_owner.State == State.Death || !_owner.PhotonView.IsMine)
         {
             return;
         }
@@ -56,5 +58,14 @@ public class CharacterMoveAbility : CharacterAbility
 
         // 4. 이동속도에 따라 그 방향으로 이동한다.
         _characterController.Move(dir * (moveSpeed * Time.deltaTime));
+    }
+
+    public void Teleport(Vector3 position)
+    {
+        _characterController.enabled = false; //
+
+        transform.position = position;
+
+        _characterController.enabled = true;
     }
 }

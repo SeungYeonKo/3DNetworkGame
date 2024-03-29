@@ -95,8 +95,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks // PUN의 다양한 서�
         Debug.Log($"PlayerCount: {PhotonNetwork.CurrentRoom.PlayerCount}");
         Debug.Log($"MaxCount: {PhotonNetwork.CurrentRoom.MaxPlayers}");
 
-        Vector3 randomAngle = new Vector3(0, UnityEngine.Random.Range(0,360), 0);
-        PhotonNetwork.Instantiate(nameof(Character), BattleScene.Instance.GetRandomSpawnPoint(), Quaternion.Euler(randomAngle));
+        // 캐릭터 생성
+        PhotonNetwork.Instantiate(nameof(Character), Vector3.zero, Quaternion.identity);
     }
 
    
