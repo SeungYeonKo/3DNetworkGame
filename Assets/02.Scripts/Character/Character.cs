@@ -88,8 +88,28 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 
         GetComponent<Animator>().SetTrigger("Death");
         GetComponent<CharacterAttackAbility>().InactiveCollider();
+
+        // 죽고나서 5초후 리스폰
+        if(PhotonView.IsMine)
+        {
+            StartCoroutine(Death_Coroutine());
+        }
     }
 
+    private IEnumerator Death_Coroutine()
+    {
+        yield return new WaitForSeconds(5f);
+        PhotonView.RPC(nameof(Live), RpcTarget.All);
+        transform.position = BattleScene.Instance.GetRandomSpawnPoint();
+    }
+
+    [PunRPC]
+    private void Live()
+    {
+        State = State.Live;
+        Stat.Init();
+        GetComponent<Animator>().SetTrigger("Live");
+    }
 
     // 내가 데미지 입었을 때
     private void OnDamagedMine()
