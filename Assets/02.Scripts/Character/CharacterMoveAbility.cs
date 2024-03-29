@@ -19,10 +19,11 @@ public class CharacterMoveAbility : CharacterAbility
    
     private void Update()
     {
-       if(!_owner.PhotonView.IsMine)
+       if(_owner.State == State.Death || !_owner.PhotonView.IsMine)
         {
             return;
         }
+
         // 순서
         // 1. 사용자의 키보드 입력을 받는다.
         float h = Input.GetAxisRaw("Horizontal");

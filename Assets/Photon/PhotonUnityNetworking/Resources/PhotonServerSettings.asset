@@ -41,6 +41,8 @@ MonoBehaviour:
   - RespawnSpaceship
   - Damaged
   - PlayAttackAnimation
+  - Death
+  - PlayMotion
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

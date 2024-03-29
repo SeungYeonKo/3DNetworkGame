@@ -32,7 +32,7 @@ public class CharacterAttackAbility : CharacterAbility
 
     private void Update()
     {
-        if (!_owner.PhotonView.IsMine)
+        if (_owner.State == State.Death || !_owner.PhotonView.IsMine)
         {
             return;
         }

@@ -14,20 +14,13 @@ using UnityEngine.UI;
 public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
     public PhotonView PhotonView { get; private set; }
-    public Stat Stat; 
-
-    private Animator _animator; // Animator 컴포넌트를 참조하기 위한 변수
-    private CharacterMoveAbility _moveAbility;
-    private CharacterAttackAbility _attackAbility;
-    private CharacterRotateAbility _rotateAbility;
+    public Stat Stat;
+    public State State { get; private set; } = State.Live;           // 함부로 수정할 수 없게 지정
 
     private void Awake()
     {
-        _animator = GetComponent<Animator>();
         Stat.Init();
         PhotonView = GetComponent<PhotonView>();
-        _moveAbility = GetComponent<CharacterMoveAbility>(); // 이동 능력 컴포넌트 참조
-        _attackAbility = GetComponent<CharacterAttackAbility>(); // 공격 능력 컴포넌트 참조
 
         if (PhotonView.IsMine)
         {
@@ -71,64 +64,42 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     [PunRPC]
     public void Damaged(int damage)
     {
+        if(State == State.Death)
+        {
+            return;
+        }
+
         Stat.Health -= damage;
+        if(Stat.Health <= 0)
+        {
+            PhotonView.RPC(nameof(Death), RpcTarget.All);
+        }
         GetComponent<CharacterShakeAbility>().Shake();
         if (PhotonView.IsMine)
         {
-            CinemachineImpulseSource impulseSource;
-            if (TryGetComponent<CinemachineImpulseSource>(out impulseSource))
-            {
-                float strength = 0.2f;
-                impulseSource.GenerateImpulseWithVelocity(UnityEngine.Random.insideUnitSphere.normalized * strength);
-            }
-            UI_DamagedEffect.Instance.Show(0.5f);
+            OnDamagedMine();
         } 
-        if(Stat.Health <= 0)
+    }
+
+    [PunRPC]
+    private void Death()
+    {
+        State = State.Death;
+
+        GetComponent<Animator>().SetTrigger("Death");
+        GetComponent<CharacterAttackAbility>().InactiveCollider();
+    }
+
+
+    // 내가 데미지 입었을 때
+    private void OnDamagedMine()
+    {
+        CinemachineImpulseSource impulseSource;
+        if (TryGetComponent<CinemachineImpulseSource>(out impulseSource))
         {
-            Die();
+            float strength = 0.2f;
+            impulseSource.GenerateImpulseWithVelocity(UnityEngine.Random.insideUnitSphere.normalized * strength);
         }
+        UI_DamagedEffect.Instance.Show(0.5f);
     }
-
-    public void Die()
-    {
-            // 죽는 애니메이션 재생
-            _animator.SetTrigger("Die");
-
-            // 이동 및 공격 기능 비활성화
-            if (_moveAbility != null)
-            {
-                _moveAbility.enabled = false; // 이동 능력 비활성화
-            }
-            if (_attackAbility != null)
-            {
-                _attackAbility.enabled = false; // 공격 능력 비활성화
-            }
-            if(_rotateAbility != null)
-            {
-                _rotateAbility.enabled = false;
-            }
-        // 바닥에 떨어지거나 죽으면 5초 후 체력/스태미나 MAX와  함께 랜덤한 위치에 리스폰
-        //StartCoroutine(ReSpawn_Coroutine());
-    }
-
- /*   private IEnumerator ReSpawn_Coroutine()
-    {
-        yield return new WaitForSeconds(5f);
-
-        Stat.Health = Stat.MaxHealth;
-        Stat.Stamina = Stat.MaxStamina;
-
-        // 랜덤 스폰 포인트 찾기
-        var spawnPoints = PhotonManager.Instance.RandomSpawnPoints;
-        var randomSpawnPoint = spawnPoints[UnityEngine.Random.Range(0, spawnPoints.Count)].position;
-
-        // 캐릭터를 랜덤 스폰 포인트로 이동
-        transform.position = randomSpawnPoint;
-
-        if (_moveAbility != null) _moveAbility.enabled = true;
-        if (_attackAbility != null) _attackAbility.enabled = true;
-        if (_rotateAbility != null) _rotateAbility.enabled = true;
-
-        _animator.ResetTrigger("Die");
-    }*/
 }
