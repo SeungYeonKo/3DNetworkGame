@@ -77,8 +77,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         Stat.Health -= damage;
         if (Stat.Health <= 0)
         {
-            State = State.Death;
-
             if (PhotonView.IsMine)
             {
                 OnDeath(actorNumber);
@@ -100,12 +98,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         if (actorNumber >= 0)
         {
             string nickname = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber).NickName;
-            string logMessage = $"\n{nickname}님이 {PhotonView.Owner.NickName}을 처치하였습니다.";
+            string logMessage = $"\n<color=#FF00FF>{nickname}</color>님이 <color=#0000FF>{PhotonView.Owner.NickName}</color>을 처치하였습니다 !";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
         else
         {
-            string logMessage = $"\n{PhotonView.Owner.NickName}이 운명을 다했습니다.";
+            string logMessage = $"\n<color=#B40404>{PhotonView.Owner.NickName}이 운명을 다했습니다.</color>";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
     }
@@ -126,6 +124,10 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     [PunRPC]
     private void Death()
     {
+        if(State == State.Death)
+        {
+            return;
+        }
         State = State.Death;
 
         GetComponent<Animator>().SetTrigger("Death");
@@ -134,10 +136,9 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)
         {
-            // 포션 생성
-            Vector3 dropPosition = transform.position + new Vector3(0f, 0.5f, 0f);      // 발에 드랍되지 않게 
-            PhotonNetwork.Instantiate("HealthPotion", dropPosition, Quaternion.identity);
-            PhotonNetwork.Instantiate("StaminaPotion", dropPosition, Quaternion.identity);
+            // 팩토리 패턴 : 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
+           ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
+           ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
 
             StartCoroutine(Death_Coroutine());
         }
