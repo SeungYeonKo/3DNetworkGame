@@ -92,7 +92,8 @@
 		sampler2D _DissolveTex;
 		sampler2D _DistortTex;
 		sampler2D _SecondColorTex;
-		// sampler2D _GradientMap;
+		// sampler2D _Gra
+ntMap;
 		UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 	#if !defined(SHADER_API_GLES)
 		sampler3D _DitherMaskLOD;

@@ -65,6 +65,7 @@ public class CharacterMoveAbility : CharacterAbility
                 _owner.Stat.Stamina = _owner.Stat.MaxStamina;
             }
         }
+   
 
         // 4. 이동속도에 따라 그 방향으로 이동한다.
           _characterController.Move(dir * (moveSpeed * Time.deltaTime));
