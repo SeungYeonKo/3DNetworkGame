@@ -23,7 +23,8 @@ public class Stat
     public float AttackCoolTime;
     public float AttackConsumeStamina;
 
-    public int JumpPower;
+    public float JumpPower;
+    public float JumpConsumeStamina;
 
     public void Init()
     {

@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CharacterAttackAbility : CharacterAbility
 {
@@ -46,7 +44,14 @@ public class CharacterAttackAbility : CharacterAbility
 
             _attackTimer = 0f;
 
-            _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, Random.Range(1, 4));
+            if (GetComponent<CharacterMoveAbility>().IsJumping)
+            {
+                _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, 4);
+            }
+            else
+            {
+                _owner.PhotonView.RPC(nameof(PlayAttackAnimation), RpcTarget.All, Random.Range(1, 4));
+            }
             // RpcTarget.All     : 모두에게
             // RpcTarget.Others  : 나 자신을 제외하고 모두에게
             // RPcTarget.Master  : 방장에게만
@@ -82,15 +87,14 @@ public class CharacterAttackAbility : CharacterAbility
             PhotonView photonView = other.GetComponent<PhotonView>();
             if (photonView != null)
             {
-                // 피격 이벤트 생성( 내 컴퓨터에서만 생성=GameObject.Instantiate ... / 모든 컴퓨에서 생성 = PhotonNetwork.Instantiate ...)
-                Vector3 hitPosition = (transform.position + other.transform.position) / 2f + new Vector3(0f, 1f);  // 내 위치와 상대의 위치를 평균내서 대략적인 위치를 구함
+                // 피격 이펙트 생성
+                Vector3 hitPosition = (transform.position + other.transform.position) / 2f + new Vector3(0f, 1f);
                 PhotonNetwork.Instantiate("HitEffect", hitPosition, Quaternion.identity);
                 photonView.RPC("Damaged", RpcTarget.All, _owner.Stat.Damage, _owner.PhotonView.OwnerActorNr);
             }
             //damagedAbleObject.Damaged(_owner.Stat.Damage);
         }
     }
-
 
     public void ActiveCollider()
     {

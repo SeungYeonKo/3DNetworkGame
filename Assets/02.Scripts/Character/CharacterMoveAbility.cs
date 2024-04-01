@@ -1,16 +1,23 @@
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
 public class CharacterMoveAbility : CharacterAbility
 {
+    public bool IsJumping => !_characterController.isGrounded;
+
     // 목표: [W],[A],[S],[D] 및 방향키를 누르면 캐릭터를 그 뱡향으로 이동시키고 싶다.
     private CharacterController _characterController;
     private Animator _animator;
 
-    protected  override void Awake()    //characterAbility에서 이미 사용중이어서 override를 써줘서 재정의
+    private float _gravity = -9.8f;
+    private float _yVelocity = 0f;
+
+    protected override void Awake()    //characterAbility에서 이미 사용중이어서 override를 써줘서 재정의
     {
         base.Awake();   // characterAbility에 있는 awake에 awake를 추가
 
@@ -36,11 +43,14 @@ public class CharacterMoveAbility : CharacterAbility
         dir.Normalize();
         dir = Camera.main.transform.TransformDirection(dir);
 
+        // Move애니메이션
         _animator.SetFloat("Move", dir.magnitude);
 
-        // 3. 중력 적용하세요.
-        dir.y = -1f;
+        // 중력 적용
+        _yVelocity += _gravity * Time.deltaTime;
+        dir.y = _yVelocity;
 
+        // 달리기
         float moveSpeed = _owner.Stat.MoveSpeed;
         if (Input.GetKey(KeyCode.LeftShift) && _owner.Stat.Stamina > 0)
         {
@@ -57,7 +67,17 @@ public class CharacterMoveAbility : CharacterAbility
         }
 
         // 4. 이동속도에 따라 그 방향으로 이동한다.
-        _characterController.Move(dir * (moveSpeed * Time.deltaTime));
+          _characterController.Move(dir * (moveSpeed * Time.deltaTime));
+
+        // 5. 점프하기
+        bool haveJumpStamina = _owner.Stat.Stamina >= _owner.Stat.JumpConsumeStamina;
+        if (haveJumpStamina && Input.GetKeyDown(KeyCode.Space) && _characterController.isGrounded)
+        {
+            _animator.SetTrigger("Jump");
+            _owner.Stat.Stamina -= _owner.Stat.JumpConsumeStamina;
+            _yVelocity = _owner.Stat.JumpPower;
+        }
+
     }
 
     public void Teleport(Vector3 position)
