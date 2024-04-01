@@ -326,7 +326,9 @@ namespace Photon.Pun
 
         public void OnLeftRoom()
         {
-            // destroying the objects here is not a good option. LocalCleanupAnythingInstantiated is called from another place, which checks auto cleanup properly, too.
+            // destroying the objects here is not a good option. LocalCleanupAnything
+            //
+            // d is called from another place, which checks auto cleanup properly, too.
             //// Destroy spawned objects and reset scene objects
             //PhotonNetwork.LocalCleanupAnythingInstantiated(true);
         }

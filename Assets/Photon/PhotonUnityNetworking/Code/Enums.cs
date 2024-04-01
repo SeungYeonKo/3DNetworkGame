@@ -1,4 +1,4 @@
-﻿// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 // <copyright file="Enums.cs" company="Exit Games GmbH">
 //   PhotonNetwork Framework for Unity - Copyright (C) 2018 Exit Games GmbH
 // </copyright>
@@ -78,7 +78,10 @@ namespace Photon.Pun
     public enum OwnershipOption
     {
         /// <summary>
-        /// Ownership is fixed. Instantiated objects stick with their creator, room objects always belong to the Master Client.
+        /// Ownership is fixed. 
+        /// 
+        /// 
+        /// d objects stick with their creator, room objects always belong to the Master Client.
         /// </summary>
         Fixed,
         /// <summary>

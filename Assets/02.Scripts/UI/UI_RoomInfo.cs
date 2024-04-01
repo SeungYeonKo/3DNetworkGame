@@ -41,7 +41,7 @@ public class UI_RoomInfo : MonoBehaviourPunCallbacks
     // 새로운 플레이어가 룸에 입장했을 때 호출되는 콜백 함수
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        _logText += $"\n{newPlayer.NickName}님이 입장했습니다";
+        _logText += $"\n<color=#FE642E>{newPlayer.NickName}</color>님이 입장했습니다";
         Refresh();
     }
 
@@ -55,10 +55,10 @@ public class UI_RoomInfo : MonoBehaviourPunCallbacks
     {
         _init = true;
 
-        RoomNameTextUI.text = PhotonNetwork.CurrentRoom.Name;
+        RoomNameTextUI.text = $"<color=#2EFEF7>{PhotonNetwork.CurrentRoom.Name}</color>";
         PlayerCountTextUI.text = $"{PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers}";
 
-        _logText += "방에 입장했습니다!";
+        _logText += "<color=#FFFF00>방에 입장했습니다!</color>";
         Refresh();
     }
 
