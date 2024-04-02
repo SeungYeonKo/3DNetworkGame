@@ -149,10 +149,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         }
     }
     private void DropItems()
-    {/*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
+    {
+        /*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
             - (score 변수는 일단 Character에 생성)
         - 20%: 먹으면 체력이 꽉차는 아이템 1개
             - 10%: 먹으면 스태미나 꽉차는 아이템 1개*/
+
         // 팩토리패턴: 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
         int randomValue = UnityEngine.Random.Range(0, 100);
         if (randomValue > 30)      // 70%
@@ -167,11 +169,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         {
             ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
         }
-        else                       // 10%
+        else   // 10%
         {
             ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
         }
     }
+
     private IEnumerator Death_Coroutine()
     {
         yield return new WaitForSeconds(5f);

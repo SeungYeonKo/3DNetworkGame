@@ -11,6 +11,12 @@ public class ItemObject : MonoBehaviourPun
     public ItemType ItemType;
     public float Value = 100;
 
+    [Header("아이템 이펙트")]
+    public GameObject HealthItemEffect;
+    public GameObject StaminaItemEffect;
+    public GameObject CoinItemEffect;
+
+
     private void Start()
     {
         // 아이템 흩뿌리기
@@ -34,6 +40,8 @@ public class ItemObject : MonoBehaviourPun
             {
                 return;
             }
+            GameObject effectToSpawn = null; // 생성할 이펙트를 저장할 변수
+
             switch (ItemType)
             {
                 case ItemType.HealthPotion:
@@ -43,6 +51,7 @@ public class ItemObject : MonoBehaviourPun
                     {
                         character.Stat.Health = character.Stat.MaxHealth;
                     }
+                    effectToSpawn = HealthItemEffect; 
                     break;
                 }
                 case ItemType.StaminaPotion:
@@ -52,13 +61,21 @@ public class ItemObject : MonoBehaviourPun
                     {
                         character.Stat.Stamina = character.Stat.MaxStamina;
                     }
+                    effectToSpawn = StaminaItemEffect; 
                     break;
                 }
                 case ItemType.Coin:
                 {
                     character.Score += 1;
+                    effectToSpawn = CoinItemEffect;
                     break;
                 }
+            }
+            // 이펙트 생성
+            if (effectToSpawn != null)
+            {
+                Vector3 effectPosition = other.transform.position + new Vector3(0, other.bounds.extents.y, 0);
+                Instantiate(effectToSpawn, effectPosition, Quaternion.identity);
             }
             // 삭제하기 전에 꺼야한다
             gameObject.SetActive(false);

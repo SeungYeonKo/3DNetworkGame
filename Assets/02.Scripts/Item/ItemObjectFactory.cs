@@ -29,13 +29,13 @@ public class ItemObjectFactory : MonoBehaviourPun
     }
 
 
-
     // 아이템 생성 및 삭제
     [PunRPC]
     private void Create(ItemType type, Vector3 position)
     {
         Vector3 dropPos = position + new Vector3(0.5f, 0.5f, 0f) + UnityEngine.Random.insideUnitSphere;
-        PhotonNetwork.InstantiateRoomObject(type.ToString(), dropPos, Quaternion.identity);      
+        PhotonNetwork.InstantiateRoomObject("Item/" + type.ToString(), dropPos, Quaternion.identity);    
+        // 폴더 안에 있는 프리팹을 불러올땐 => "폴더이름/" + 
     }
 
     public void RequestDelete(int viewID)
