@@ -20,7 +20,7 @@ public class ItemObject : MonoBehaviourPun
             Vector3 randomVector = UnityEngine.Random.insideUnitSphere;
             randomVector.y = 1f;
             randomVector.Normalize();
-            randomVector *= UnityEngine.Random.Range(2, 7f);
+            randomVector *= UnityEngine.Random.Range(3, 7f);
             rigidbody.AddForce(randomVector, ForceMode.Impulse);
         }
     }
