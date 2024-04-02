@@ -28,26 +28,6 @@ public class ItemObjectFactory : MonoBehaviourPun
         }
     }
 
-   public void MakePercent(Vector3 position)
-    {
-        int percentage = Random.Range(0, 100);
-        if (percentage < 70)
-        {
-            Debug.Log("코인아이템");
-            Create(ItemType.Coin, position);
-        }
-        else if(percentage < 90)
-        {
-            Debug.Log("체력아이템");
-            Create(ItemType.HealthPotion, position);
-        }
-        else
-        {
-            Debug.Log("스태미너아이템");
-            Create(ItemType.StaminaPotion, position);
-        }
-    }
-
 
 
     // 아이템 생성 및 삭제
