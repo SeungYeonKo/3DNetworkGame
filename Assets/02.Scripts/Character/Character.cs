@@ -10,12 +10,14 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterShakeAbility))]
 public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
-    public PhotonView PhotonView { get; private set; }
     public Stat Stat;
+    public PhotonView PhotonView { get; private set; }
     public State State { get; private set; } = State.Live;
 
     private Vector3 _receivedPosition;
     private Quaternion _receivedRotation;
+
+    public int Score = 0;
 
     private void Awake()
     {
@@ -108,6 +110,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         }
     }
 
+
     private void OnDamagedMine()
     {
         // 카메라 흔들기 위해 Impulse를 발생시킨다.
@@ -136,10 +139,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)
         {
+            // 아이템 생성
             // 팩토리 패턴 : 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
-           ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
-           ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
-
+            /*ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
+            ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
+            ItemObjectFactory.Instance.RequestCreate(ItemType.Coin, transform.position);*/
+            ItemObjectFactory.Instance.MakePercent(transform.position);
             StartCoroutine(Death_Coroutine());
         }
     }

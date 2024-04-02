@@ -6,10 +6,24 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 [RequireComponent(typeof(Collider))]
 public class ItemObject : MonoBehaviourPun
-{
+{ 
     [Header("아이템 타입")]
     public ItemType ItemType;
     public float Value = 100;
+
+    private void Start()
+    {
+        // 아이템 흩뿌리기
+        if (photonView.IsMine)
+        {
+            Rigidbody rigidbody = GetComponent<Rigidbody>();
+            Vector3 randomVector = UnityEngine.Random.insideUnitSphere;
+            randomVector.y = 1f;
+            randomVector.Normalize();
+            randomVector *= UnityEngine.Random.Range(2, 7f);
+            rigidbody.AddForce(randomVector, ForceMode.Impulse);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -38,6 +52,11 @@ public class ItemObject : MonoBehaviourPun
                     {
                         character.Stat.Stamina = character.Stat.MaxStamina;
                     }
+                    break;
+                }
+                case ItemType.Coin:
+                {
+                    character.Score += 1;
                     break;
                 }
             }

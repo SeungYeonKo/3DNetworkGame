@@ -13,6 +13,8 @@ public class UI_CharacterStat : MonoBehaviour
     public Slider HealthSliderUI;
     [Header("스태미나 슬라이더 UI")]
     public Slider StaminaSliderUI;
+    [Header("스코어 Text")]
+    public Text ScoreText;
 
     private void Awake()
     {
@@ -27,5 +29,6 @@ public class UI_CharacterStat : MonoBehaviour
         }
         HealthSliderUI.value = (float)MyCharacter.Stat.Health / MyCharacter.Stat.MaxHealth;
         StaminaSliderUI.value = MyCharacter.Stat.Stamina / MyCharacter.Stat.MaxStamina;
+        ScoreText.text = "Score : " + MyCharacter.Score.ToString();
     }
 }
