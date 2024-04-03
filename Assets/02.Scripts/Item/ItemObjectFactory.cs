@@ -16,6 +16,16 @@ public class ItemObjectFactory : MonoBehaviourPun
 
     }
 
+    public ItemObject MasterCreate(ItemType type, Vector3 position)
+    {
+        if(!PhotonNetwork.IsMasterClient)
+        {
+            Debug.Log("마스터 클라이언트만 호출할 수 있습니다");
+            return null;
+        }
+        return Create(type, position);
+    }
+
     public void RequestCreate(ItemType type, Vector3 position)
     {
         if(PhotonNetwork.IsMasterClient)
@@ -28,14 +38,15 @@ public class ItemObjectFactory : MonoBehaviourPun
         }
     }
 
-
     // 아이템 생성 및 삭제
     [PunRPC]
-    private void Create(ItemType type, Vector3 position)
+    private ItemObject  Create(ItemType type, Vector3 position)
     {
         Vector3 dropPos = position + new Vector3(0.5f, 0.5f, 0f) + UnityEngine.Random.insideUnitSphere;
-        PhotonNetwork.InstantiateRoomObject("Item/" + type.ToString(), dropPos, Quaternion.identity);    
+        GameObject gameObject = PhotonNetwork.InstantiateRoomObject("Item/" + type.ToString(), dropPos, Quaternion.identity);    
         // 폴더 안에 있는 프리팹을 불러올땐 => "폴더이름/" + 
+
+        return gameObject.GetComponent<ItemObject>();
     }
 
     public void RequestDelete(int viewID)

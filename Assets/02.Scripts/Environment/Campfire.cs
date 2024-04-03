@@ -29,6 +29,12 @@ public class Campfire : MonoBehaviour
 
     private void OnTriggerStay(Collider col)
     {
+        Character c = col.GetComponent<Character>();
+        if (_target != null && c != null && c.State == State.Death)
+        {
+            _target = null;
+        }
+
         if (_target == null)
         {
             return;
@@ -44,6 +50,7 @@ public class Campfire : MonoBehaviour
 
     private void OnTriggerExit(Collider col)
     {
+
         IDamaged damagedObject = col.GetComponent<IDamaged>();
         if (damagedObject == null)
         {

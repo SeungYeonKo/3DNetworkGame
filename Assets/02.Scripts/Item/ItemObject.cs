@@ -10,12 +10,7 @@ public class ItemObject : MonoBehaviourPun
     [Header("아이템 타입")]
     public ItemType ItemType;
     public float Value = 100;
-
-    [Header("아이템 이펙트")]
-    public GameObject HealthItemEffect;
-    public GameObject StaminaItemEffect;
-    public GameObject CoinItemEffect;
-
+    CoinSpawner coinSpawner;
 
     private void Start()
     {
@@ -29,6 +24,8 @@ public class ItemObject : MonoBehaviourPun
             randomVector *= UnityEngine.Random.Range(3, 7f);
             rigidbody.AddForce(randomVector, ForceMode.Impulse);
         }
+        // CoinSpawner 인스턴스 찾기
+        coinSpawner = FindObjectOfType<CoinSpawner>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -36,12 +33,11 @@ public class ItemObject : MonoBehaviourPun
         if (other.CompareTag("Player"))
         {
             Character character = other.GetComponent<Character>();
-            if(character.State == State.Death)
+            if(!character.PhotonView.IsMine || character.State == State.Death)
             {
                 return;
             }
-            GameObject effectToSpawn = null; // 생성할 이펙트를 저장할 변수
-
+             character.GetComponent<CharacterEffectAbility>().RequestPlay((int)ItemType);
             switch (ItemType)
             {
                 case ItemType.HealthPotion:
@@ -51,7 +47,7 @@ public class ItemObject : MonoBehaviourPun
                     {
                         character.Stat.Health = character.Stat.MaxHealth;
                     }
-                    effectToSpawn = HealthItemEffect; 
+                 
                     break;
                 }
                 case ItemType.StaminaPotion:
@@ -61,21 +57,23 @@ public class ItemObject : MonoBehaviourPun
                     {
                         character.Stat.Stamina = character.Stat.MaxStamina;
                     }
-                    effectToSpawn = StaminaItemEffect; 
                     break;
                 }
                 case ItemType.Coin:
+                case ItemType.Coin2:
+                case ItemType.Coin3:
                 {
-                    character.Score += 1;
-                    effectToSpawn = CoinItemEffect;
+                    character.Score += (int)Value;
+                    if (coinSpawner != null)
+                    {
+                        //coinSpawner.CoinConsumed(); // CoinSpawner에 코인 소비 알림
+                    }
+                    else
+                    {
+                        Debug.LogError("CoinSpawner instance not found.");
+                    }
                     break;
                 }
-            }
-            // 이펙트 생성
-            if (effectToSpawn != null)
-            {
-                Vector3 effectPosition = other.transform.position + new Vector3(0, other.bounds.extents.y, 0);
-                Instantiate(effectToSpawn, effectPosition, Quaternion.identity);
             }
             // 삭제하기 전에 꺼야한다
             gameObject.SetActive(false);
