@@ -65,14 +65,6 @@ public class ItemObject : MonoBehaviourPun
                 {
                     character.Score += (int)Value;
                     character.AddScore((int)Value);
-                    if (coinSpawner != null)
-                    {
-                        //coinSpawner.CoinConsumed(); // CoinSpawner에 코인 소비 알림
-                    }
-                    else
-                    {
-                        Debug.LogError("CoinSpawner instance not found.");
-                    }
                     break;
                 }
             }

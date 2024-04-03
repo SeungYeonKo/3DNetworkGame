@@ -47,4 +47,4 @@ MonoBehaviour:
   MinCreateTime: 10
   MaxCreateTime: 40
   MinCreateCount: 5
-  MaxCreateCount: 20
+  MaxCreateCount: 10

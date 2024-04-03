@@ -280,9 +280,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemType: 1
   Value: 100
-  HealthItemEffect: {fileID: 1048503383796791831, guid: bef9dffaaa6445a4a931cfd76ef2b748, type: 3}
-  StaminaItemEffect: {fileID: 573823358707280322, guid: 232f61d7b77f2524cb56bd7fd4e1fde9, type: 3}
-  CoinItemEffect: {fileID: 2486980188389436578, guid: 1ec6ff78c662f8b4687d3f9a8368ca09, type: 3}
 --- !u!54 &4335522709388754512
 Rigidbody:
   m_ObjectHideFlags: 0

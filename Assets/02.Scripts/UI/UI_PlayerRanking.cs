@@ -35,9 +35,19 @@ public class UI_PlayerRanking : MonoBehaviourPunCallbacks
     private void Refresh()
     {
         Dictionary<int, Player> players = PhotonNetwork.CurrentRoom.Players;
-        List<Player> playerList = players.Values.ToList();
-        int playerCount = Mathf.Min(playerList.Count, 5);
 
+        // 자동 정렬
+        List<Player> playerList = players.Values.ToList();
+        playerList.RemoveAll(player => !player.CustomProperties.ContainsKey("Score"));
+        playerList.Sort((player1, player2) =>
+        {
+            int player1Score = (int)player1.CustomProperties["Score"];
+            int player2Score = (int)player2.CustomProperties["Score"];
+            return player2Score.CompareTo(player1Score);
+        });
+
+
+        int playerCount = Mathf.Min(playerList.Count, 5);
         foreach (UI_PlayerRankingSlot slot in Slots)
         {
             slot.gameObject.SetActive(false);

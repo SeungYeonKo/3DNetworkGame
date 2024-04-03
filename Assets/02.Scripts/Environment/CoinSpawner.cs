@@ -59,7 +59,7 @@ public class CoinSpawner : MonoBehaviour
         }
     
         // 코인 타입을 랜덤으로 반환하는 메소드 추가
-        private ItemType GetRandomCoinType()
+        public ItemType GetRandomCoinType()
         {
             ItemType[] coinTypes = { ItemType.Coin, ItemType.Coin2, ItemType.Coin3 };
             int randomIndex = UnityEngine.Random.Range(0, coinTypes.Length);
