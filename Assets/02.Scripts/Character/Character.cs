@@ -1,6 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
+using ExitGames.Client.Photon;
 using Photon.Pun;
 using UnityEngine;
 
@@ -34,6 +34,19 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     private void Start()
     {
         SetRandomPositionAndRotation();
+
+        // 커스텀 프로퍼티
+        ExitGames.Client.Photon.Hashtable hashtable = new ExitGames.Client.Photon.Hashtable();
+        hashtable.Add("Score", 0);
+        hashtable.Add("KillCount", 0);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
+    }
+
+    public void AddScore(int score)
+    {
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        myHashtable["Score"] = (int)myHashtable["Score"] + score;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
     }
 
     private void Update()
@@ -109,7 +122,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
     }
-
 
     private void OnDamagedMine()
     {

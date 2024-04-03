@@ -63,7 +63,8 @@ public class ItemObject : MonoBehaviourPun
                 case ItemType.Coin2:
                 case ItemType.Coin3:
                 {
-                    character.Score += (int)Value;
+                    //character.Score += (int)Value;
+                    character.AddScore((int)Value);
                     if (coinSpawner != null)
                     {
                         //coinSpawner.CoinConsumed(); // CoinSpawner에 코인 소비 알림
