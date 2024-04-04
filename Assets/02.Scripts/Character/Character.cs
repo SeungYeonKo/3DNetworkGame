@@ -54,6 +54,8 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
     }
 
+   
+
     private void Update()
     {
         if (!PhotonView.IsMine)
@@ -137,6 +139,17 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
             string logMessage = $"\n<color=#B40404>{PhotonView.Owner.NickName}이 운명을 다했습니다.</color>";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
+        if (PhotonView.IsMine)
+        {
+            ResetMyScore();
+        }
+    }
+
+    private void ResetMyScore()
+    {
+        ExitGames.Client.Photon.Hashtable properties = new ExitGames.Client.Photon.Hashtable();
+        properties["Score"] = 0; // 점수를 0으로 리셋합니다.
+        PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
     }
 
     private void OnDamagedMine()
