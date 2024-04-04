@@ -13,14 +13,25 @@ public class CharacterAttackAbility : CharacterAbility
     //    -> 유지보수가 매우 어렵다.
     // 준수 전략
     // - 기존의 클래스로 해결할 수 없다면 새로운 클래스를 구현
+    // 때린 애들을 기억해 놓는 리스트
+    private List<IDamaged> _damagedList = new List<IDamaged>();
 
     private Animator _animator;
     private float _attackTimer = 0;
 
     public Collider WeaponCollider;
+    public GameObject WeaponObject;
 
-    // 때린 애들을 기억해 놓는 리스트
-    private List<IDamaged> _damagedList = new List<IDamaged>();
+    // 1000점마다 무기 크기 증가
+    [PunRPC]
+    public void RefreshWeaponScale()
+    {
+        int score = _owner.GetPropertyIntValue("Score");
+        float scale = 1f;
+        scale += (score / 1000) * 0.1f;
+
+        WeaponObject.transform.localScale = new Vector3(scale, scale, scale);
+    }
 
 
     private void Start()
