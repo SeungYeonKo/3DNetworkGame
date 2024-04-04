@@ -1,6 +1,5 @@
+using System;
 using Photon.Pun;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
@@ -64,7 +63,7 @@ public class ItemObject : MonoBehaviourPun
                 case ItemType.Coin3:
                 {
                     //character.Score += (int)Value;
-                    character.AddScore((int)Value);
+                    character.AddPropertyIntValue("Score",(int)Value);
                     break;
                 }
             }

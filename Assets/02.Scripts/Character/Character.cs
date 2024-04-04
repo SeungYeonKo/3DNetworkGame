@@ -4,6 +4,7 @@ using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 [RequireComponent(typeof(CharacterMoveAbility))]
 [RequireComponent(typeof(CharacterRotateAbility))]
@@ -18,7 +19,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     private Vector3 _receivedPosition;
     private Quaternion _receivedRotation;
 
-    public int Score = 0;
+    private int _halfScore;
 
     private void Awake()
     {
@@ -47,23 +48,25 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         PhotonNetwork.LocalPlayer.SetCustomProperties(hashtable);
     }
 
-    public void AddScore(int score)
+    [PunRPC]
+    public void AddPropertyIntValue(string key, int value)
     {
         ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
-        myHashtable["Score"] = (int)myHashtable["Score"] + score;
+        myHashtable[key] = (int)myHashtable[key] + value;
         PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
     }
-
-   
-
-    private void Update()
+    public void SetPropertyIntValue(string key, int value)
     {
-        if (!PhotonView.IsMine)
-        {
-            //transform.position = Vector3.Lerp(transform.position, _receivedPosition, Time.deltaTime * 20f);
-            //transform.rotation = Quaternion.Slerp(transform.rotation, _receivedRotation, Time.deltaTime * 20f);
-        }
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        myHashtable[key] = value;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
     }
+    public int GetPropertyIntValue(string key)
+    {
+        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        return (int)myHashtable[key];
+    }
+
 
     // 데이터 동기화를 위해 데이터 전송 및 수신 기능을 가진 약속
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -82,6 +85,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         }
         // info는 송수신 성공/실패 여부에 대한 메시지 담겨있다.
     }
+
 
     [PunRPC]
     public void AddLog(string logMessage)
@@ -117,40 +121,29 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 
     private void OnDeath(int actorNumber)
     {
+        _halfScore = GetPropertyIntValue("Score")/2;
+
+        // 죽으면 점수를 0점으로 변경
+        SetPropertyIntValue("Score", 0);
+
         if (actorNumber >= 0)
         {
-            // 적을 처치한 플레이어의 Player 객체를 가져옴
-            Player killer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
-
-            // 처치한 플레이어의 CustomProperties에서 "KillCount" 값을 가져옴
-            int currentKillCount = (int)killer.CustomProperties["KillCount"];
-
-            // "KillCount" 값을 1 증가
-             ExitGames.Client.Photon.Hashtable newProperties = new ExitGames.Client.Photon.Hashtable { { "KillCount", currentKillCount + 1 } };
-            killer.SetCustomProperties(newProperties); // 변경된 값을 설정합니다.
-
             // 로그 메시지를 생성하여 모든 클라이언트에게 전달
-            string nickname = killer.NickName;
+            string nickname = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber).NickName;
             string logMessage = $"\n<color=#FF00FF>{nickname}</color>님이 <color=#0000FF>{PhotonView.Owner.NickName}</color>을 처치하였습니다 !";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
+
+            Player targetPlayer = PhotonNetwork.CurrentRoom.GetPlayer(actorNumber);
+            PhotonView.RPC(nameof(AddPropertyIntValue), targetPlayer, "Score", _halfScore);
+            PhotonView.RPC(nameof(AddPropertyIntValue), targetPlayer, "KillCount", 1);
         }
         else
         {
             string logMessage = $"\n<color=#B40404>{PhotonView.Owner.NickName}이 운명을 다했습니다.</color>";
             PhotonView.RPC(nameof(AddLog), RpcTarget.All, logMessage);
         }
-        if (PhotonView.IsMine)
-        {
-            ResetMyScore();
-        }
     }
 
-    private void ResetMyScore()
-    {
-        ExitGames.Client.Photon.Hashtable properties = new ExitGames.Client.Photon.Hashtable();
-        properties["Score"] = 0; // 점수를 0으로 리셋합니다.
-        PhotonNetwork.LocalPlayer.SetCustomProperties(properties);
-    }
 
     private void OnDamagedMine()
     {
@@ -180,15 +173,12 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         // 죽고나서 5초후 리스폰
         if (PhotonView.IsMine)
         {
-            // 아이템 생성
-            // 팩토리 패턴 : 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
-            /*ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
-            ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
-            ItemObjectFactory.Instance.RequestCreate(ItemType.Coin, transform.position);*/
             DropItems();
             StartCoroutine(Death_Coroutine());
         }
     }
+
+    public int Score = 0;
     private void DropItems()
     {
         /*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
@@ -200,7 +190,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         int randomValue = UnityEngine.Random.Range(0, 100);
         if (randomValue > 40)      // 60%
         {
-            int randomCount = UnityEngine.Random.Range(10,20);
+            int randomCount = _halfScore / 100;
             for (int i = 0; i < randomCount; ++i)
                 // 코인 타입 랜덤 선택
             {
