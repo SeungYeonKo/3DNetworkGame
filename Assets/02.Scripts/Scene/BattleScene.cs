@@ -1,7 +1,8 @@
+using Photon.Pun;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BattleScene : MonoBehaviour
+public class BattleScene : MonoBehaviourPunCallbacks
 {
    public static BattleScene Instance { get; private set; }
 
@@ -12,6 +13,7 @@ public class BattleScene : MonoBehaviour
         Instance = this;
     }
 
+    // 플레이어 랜덤 포인트 생성
     public Vector3 GetRandomSpawnPoint()
     {
         int randomIndex = UnityEngine.Random.Range(0, RandomSpawnPoint.Count);

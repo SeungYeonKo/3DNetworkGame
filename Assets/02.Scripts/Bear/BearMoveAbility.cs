@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using System.Net.Http.Headers;
+using Photon.Pun;
 
 public enum BearState
 {
@@ -18,56 +19,97 @@ public enum BearState
 
 
 public class BearMoveAbility : MonoBehaviour
-{
-    private NavMeshAgent _navMeshAgent;
-    private Animator _animator;
+{ 
     private BearState _currentState = BearState.Idle;
 
-    // 체력
-    public int Health;
-    public int MaxHealth = 100;
-    //public Slider HealthSliderUI;
 
-    // 이동
-    public float MoveSpeed = 15f;
+    private NavMeshAgent _navMeshAgent;
+    public Animator BearAnimator;
+    public Transform PatrolTarget;
+
+    private List<Character> _characterList = new List<Character>();
+    public SphereCollider CharacterDetectCollider;
+    private Character _targetCharacter;
+    
+
     public Vector3 StartPosition;
-
-    // 공격
-    public int Damage = 15;
-    public const float AttackDelay = 1f;
-    private float _attackTimer = 0f;
-
-    // AI
-    private Transform _target;
-    public float FindDistance = 20f;
-    public float AttackDistance = 7f;
-    public float MoveDistance = 40f;
-    public const float TOLERANCE = 0.1f;
-    private const float IDLE_DURATION = 3f;
-    private float _idleTimer;
+    public Slider HealthSliderUI;
+    public Stat Stat;
 
     private bool _isTargetSet = false;
+    // AI
+    // [IDLE]  
+    private float _idleTime;
+    private const float IDLE_MAX_TIME = 5f;
+
+    public float MoveDistance = 40f;
+    public float FindDistance = 20f;
+
+    // [Attack]
+    private float _attackTimer = 0f;
+    private float AttackDelay = 0.5f;
+    public float AttackDistance = 3f;
+    
+    public const float TOLERANCE = 0.1f;
+    public float ComebackFindPlayerDistance = 10f;
 
     private void Start()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
-        _animator = GetComponent<Animator>();
+        CharacterDetectCollider.radius = FindDistance;
         StartPosition = transform.position;
+        _navMeshAgent.speed = Stat.MoveSpeed;
         Init();
+    }
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.CompareTag("Player"))
+        {
+            Character character = col.GetComponent<Character>();
+            if (!_characterList.Contains(character))
+            {
+                Debug.Log("새로운 인간을 찾았다 !");
+                _characterList.Add(character);
+            }
+        }
     }
 
     public void Init()
     {
-        _idleTimer = 0f;
-        Health = MaxHealth;
+        _idleTime = 0f;
+        Stat.Health = Stat.MaxHealth;
     }
 
     private void Update()
     {
-        //HealthSliderUI.value = (float)Health / (float)MaxHealth;
         if (!_isTargetSet)
         {
             TrySetTarget();
+            return;
+        }
+        // _targetCharacter이 null이 아닌지 확인
+        if (_targetCharacter != null)
+        {
+            float distanceToPlayer = Vector3.Distance(_targetCharacter.transform.position, transform.position);
+            HealthSliderUI.gameObject.SetActive(distanceToPlayer <= FindDistance);
+            HealthSliderUI.value = (float)Stat.Health / (float)Stat.MaxHealth;
+        }
+        else
+        {
+            // _targetCharacter가 null이면, HealthSliderUI를 비활성화
+            HealthSliderUI.gameObject.SetActive(false);
+        }
+
+        if (_currentState == BearState.Trace || _currentState == BearState.Attack)
+        {
+            if (_targetCharacter != null) // 여기도 검사 추가
+            {
+                LookAtPlayerSmoothly();
+            }
+        }
+        // 조기 반환문
+        if (!PhotonNetwork.IsMasterClient)
+        {
             return;
         }
 
@@ -82,125 +124,164 @@ public class BearMoveAbility : MonoBehaviour
             case BearState.Die: Die(); break;
         }
     }
+
     private void TrySetTarget()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            _target = player.transform;
-            _isTargetSet = true;
-            Init(); // 타겟이 설정된 후 초기화 작업을 수행
+            _targetCharacter = player.GetComponent<Character>();
+            if (_targetCharacter != null)
+            {
+                _isTargetSet = true;
+                Init(); // 타겟이 설정된 후 초기화 작업을 수행
+            }
         }
     }
 
     private void Idle()
     {
-        _idleTimer += Time.deltaTime;
-        if(_idleTimer > IDLE_DURATION)
+        _idleTime += Time.deltaTime;
+        if(_idleTime >= IDLE_MAX_TIME)
         {
-            _idleTimer = 0f;
-            _animator.SetTrigger("IdleToPatrol");
+            _idleTime = 0f;
+            Debug.Log("Idle->Patrol");
+            BearAnimator.SetTrigger("IdleToPatrol");
             _currentState = BearState.Patrol;
+        }
+        if (_targetCharacter != null && Vector3.Distance(_targetCharacter.transform.position, transform.position) <= FindDistance)
+        {
+            Debug.Log("Idle -> Trace");
+            BearAnimator.SetTrigger("IdleToTrace");
+            _currentState = BearState.Trace;
         }
     }
 
     private void Patrol()
     {
-        // 플레이어가 감지 범위 내에 있으면 상태를 Trace로 변경하여 플레이어를 추적
-        if (Vector3.Distance(_target.position, transform.position) <= FindDistance)
-        {
-            _animator.SetTrigger("PatrolToTrace");
-            _currentState = BearState.Trace;
-        }
-
-        // 추가: Patrol 상태에서 일정 시간 대기 후 Comeback으로 전환
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= TOLERANCE)
         {
-            StartCoroutine(WaitAndComeback());
+            // 새로운 랜덤 위치 설정
+            Vector3 newPatrolPoint = RandomNavSphere(StartPosition, MoveDistance, -1);
+            _navMeshAgent.SetDestination(newPatrolPoint);
+        }
+
+        if (Vector3.Distance(_targetCharacter.transform.position, transform.position) <= FindDistance)
+        {
+            Debug.Log("Patrol -> Trace");
+            BearAnimator.SetTrigger("PatrolToTrace");
+            _currentState = BearState.Trace;
         }
     }
 
-    private IEnumerator WaitAndComeback()
+    // NavMesh 위에 지정된 반경 내에서 랜덤한 위치를 반환
+    public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
-        yield return new WaitForSeconds(2f);  // 대기 시간 조절 필요
-        _animator.SetTrigger("PatrolToComeback");
-        _currentState = BearState.Comeback;
+        Vector3 randDirection = Random.insideUnitSphere * dist;
+
+        randDirection += origin;
+
+        NavMeshHit navHit;
+
+        NavMesh.SamplePosition(randDirection, out navHit, dist, layermask);
+
+        return navHit.position;
     }
 
     private void Trace()
     {
-        Vector3 dir = _target.transform.position - this.transform.position;
+        if(_targetCharacter == null)
+        {
+            _currentState = BearState.Comeback;
+            return;
+        }
+
+        Vector3 dir = _targetCharacter.transform.position - this.transform.position;
         dir.y = 0;
         dir.Normalize();
 
         _navMeshAgent.stoppingDistance = AttackDistance;
-        _navMeshAgent.destination = _target.position;
+        _navMeshAgent.destination = _targetCharacter.transform.position;
 
         // 플레이어와의 거리가 공격 범위 내에 있는지 확인
-        if (Vector3.Distance(_target.position, transform.position) <= AttackDistance)
+        if (Vector3.Distance(_targetCharacter.transform.position, transform.position) <= AttackDistance)
         {
-            // 공격 범위 내에 있으면 Attack 상태로 전환
+            Stat.MoveSpeed = Stat.RunSpeed;
             if (_currentState != BearState.Attack)   // 현재 상태가 Attack이 아닐 때만 전환
             {
-                _animator.SetTrigger("TraceToAttack");
+                BearAnimator.SetTrigger("TraceToAttack");
                 _currentState = BearState.Attack;
             }
         }
-        else if (Vector3.Distance(_target.position, transform.position) >= FindDistance)
+        else if (Vector3.Distance(_targetCharacter.transform.position, transform.position) >= MoveDistance)
         {
-            // 플레이어와의 거리가 찾기 범위를 벗어나면 Comeback 상태로 전환
-            _animator.SetTrigger("TraceToComeback");
+            Debug.Log("Trace->Comeback");
+            BearAnimator.SetTrigger("TraceToComeback");
             _currentState = BearState.Comeback;
         }
     }
 
     private void Attack()
     {
-        float distanceToTarget = Vector3.Distance(_target.position, transform.position);
-        _attackTimer += Time.deltaTime;
-        if(_attackTimer >= AttackDelay) 
+        // 타겟이 게임에서 나가면 복귀
+        if (_targetCharacter == null)
         {
-            if (distanceToTarget <= AttackDistance)
-            {
-                _animator.SetTrigger("Attack");
-            }
-            _attackTimer = 0;
-        }
-        if (distanceToTarget > AttackDistance || distanceToTarget > FindDistance)
-        {
-            _attackTimer = 0f;
-            _animator.SetTrigger("AttackToTrace");
-            _currentState = BearState.Trace;
-        }
-    }
-
-    private void Comeback()
-    {
-        Vector3 dir = StartPosition - this.transform.position;
-        dir.y = 0;
-        dir.Normalize();
-
-        _navMeshAgent.stoppingDistance = TOLERANCE;
-
-        _navMeshAgent.destination = StartPosition;
-
-        if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= TOLERANCE)
-        {
-            _animator.SetTrigger("ComebackToIdle");
-
+            Debug.Log("Trace -> Return");
+            _navMeshAgent.isStopped = false;
+            StartPosition = transform.position;
             _currentState = BearState.Idle;
+            return;
         }
-    }
 
-    private void Damaged()
+        // 타겟이 죽거나 공격 범위에서 벗어나면 복귀
+        _navMeshAgent.destination = _targetCharacter.transform.position;
+        if (_targetCharacter.State == State.Death || GetDistance(_targetCharacter.transform) > AttackDistance)
+        {
+            Debug.Log("Trace -> Return");
+            _navMeshAgent.isStopped = false;
+            StartPosition = transform.position;
+            _currentState = BearState.Idle;
+            return;
+        }
+
+
+    }
+        private void Comeback()
+        {
+            Vector3 dir = StartPosition - this.transform.position;
+            dir.y = 0;
+            dir.Normalize();
+
+            _navMeshAgent.stoppingDistance = TOLERANCE;
+            _navMeshAgent.destination = StartPosition;
+
+            if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= TOLERANCE)
+            {
+                Debug.Log("Comeback -> idle");
+                BearAnimator.SetTrigger("ComebackToIdle");
+                _currentState = BearState.Idle;
+            }
+            if (Vector3.Distance(_targetCharacter.transform.position, transform.position) <= ComebackFindPlayerDistance)
+            {
+                Debug.Log("Comeback -> Trace");
+                BearAnimator.SetTrigger("ComebackToTrace");
+
+                _currentState = BearState.Trace;
+            }
+        }
+    
+    [PunRPC]
+    public void Damaged()
     {
- 
+        Debug.Log("Damaged -> Trace");
+        BearAnimator.SetTrigger("DamagedToTrace");
+        _currentState = BearState.Trace;   
     }
-
+  
     private Coroutine _dieCoroutine;
     private void Die()
     {
-        _animator.SetTrigger("Die");
+        BearAnimator.SetTrigger("Die");
 
         if (_dieCoroutine == null)
         {
@@ -213,9 +294,101 @@ public class BearMoveAbility : MonoBehaviour
         _navMeshAgent.isStopped = true;
         _navMeshAgent.ResetPath();
 
-        //HealthSliderUI.gameObject.SetActive(false);
+        HealthSliderUI.gameObject.SetActive(false);
         Destroy(gameObject);
         yield return new WaitForSeconds(3f);
     }
 
+    void LookAtPlayerSmoothly()
+    {
+        Vector3 directionToTarget = _targetCharacter.transform.position - transform.position;
+        directionToTarget.y = 0; //수평 회전만
+        Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5); // 회전 속도 조절
+    }
+
+    // 나와의 거리가 distance보다 짧은 플레이어를 반환
+    private Character FindTarget(float distance)
+    {
+        _characterList.RemoveAll(c => c == null);
+
+        Vector3 myPosition = transform.position;
+        foreach (Character character in _characterList)
+        {
+            if (character.State == State.Death)
+            {
+                continue;
+            }
+
+            if (Vector3.Distance(character.transform.position, myPosition) <= distance)
+            {
+                return character;
+            }
+        }
+
+        return null;
+    }
+    private List<Character> FindTargets(float distance)
+    {
+        _characterList.RemoveAll(c => c == null);
+
+        List<Character> characters = new List<Character>();
+
+        Vector3 myPosition = transform.position;
+        foreach (Character character in _characterList)
+        {
+            if (character.State == State.Death)
+            {
+                continue;
+            }
+
+            if (Vector3.Distance(character.transform.position, myPosition) <= distance)
+            {
+                characters.Add(character);
+            }
+        }
+
+        return characters;
+    }
+
+
+    private float GetDistance(Transform otherTransform)
+    {
+        return Vector3.Distance(transform.position, otherTransform.position);
+    }
+
+
+    public void AttackAction()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            return;
+        }
+
+        Debug.Log("AttackAction!");
+        // 일정 범위 안에 있는 모든 플레이어에게 데미지를 주고 싶다.
+        List<Character> targets = FindTargets(AttackDistance + 0.1f);
+        foreach (Character target in targets)
+        {
+            Vector3 dir = (target.transform.position - transform.position).normalized;
+            int viewAngle = 160 / 2;
+            float angle = Vector3.Angle(transform.forward, dir);
+            Debug.Log(angle);
+            if (Vector3.Angle(transform.forward, dir) < viewAngle)
+            {
+                target.PhotonView.RPC("Damaged", RpcTarget.All, Stat.Damage, -1);
+            }
+        }
+    }
+
+    private void RequestPlayAnimation(string animationName)
+    {
+        GetComponent<PhotonView>().RPC(nameof(PlayAnimation), RpcTarget.All, animationName);
+    }
+
+    [PunRPC]
+    private void PlayAnimation(string animationName)
+    {
+        BearAnimator.SetTrigger(animationName);
+    }
 }

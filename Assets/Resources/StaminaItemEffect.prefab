@@ -254,7 +254,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -9998,7 +9998,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.3
+      scalar: 1.2
       minScalar: 0.2
       maxCurve:
         serializedVersion: 2
@@ -10099,7 +10099,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 0.8
-      minScalar: 0.3
+      minScalar: 0.7
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -10399,7 +10399,7 @@ ParticleSystem:
     gravitySource: 0
     maxNumParticles: 26
     customEmitterVelocity: {x: 0, y: 0, z: 0}
-    size3D: 0
+    size3D: 1
     rotation3D: 0
     gravityModifier:
       serializedVersion: 2
@@ -14944,7 +14944,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
