@@ -4729,6 +4729,7 @@ Transform:
   - {fileID: 2068040392}
   - {fileID: 474780511}
   - {fileID: 1227281644}
+  - {fileID: 1536918508}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &440811215
@@ -14164,7 +14165,7 @@ Transform:
   m_GameObject: {fileID: 1227281643}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.09, y: 0, z: -37.29}
+  m_LocalPosition: {x: -11.7, y: 0, z: -22.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17772,75 +17773,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1841200157698696397, guid: b198645ec83f82a48a1de7fc66884ad9, type: 3}
   m_PrefabInstance: {fileID: 1508407187}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1518928600
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2620613231809056193, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3700667329854466811, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: sceneViewId
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4625574346344167160, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_Name
-      value: Bear
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -15.768577
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.22679567
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 7.039496
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -0.20552275
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.97865236
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -203.71999
-      objectReference: {fileID: 0}
-    - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8419982050198894746, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: Stat.Damage
-      value: 20
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
 --- !u!1001 &1519413265
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18277,6 +18209,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 108225653778528902, guid: 3e2accafa3a5f1b40ba86cf39bcb49a7, type: 3}
   m_PrefabInstance: {fileID: 1530349186}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1536918507
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1536918508}
+  m_Layer: 0
+  m_Name: BearSpawnPoint4
+  m_TagString: PatrolPoint
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1536918508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1536918507}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -34.1, y: 0, z: -22.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 437871451}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1552977132
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25321,4 +25284,3 @@ SceneRoots:
   - {fileID: 2078176077}
   - {fileID: 1771806890}
   - {fileID: 641056548}
-  - {fileID: 1518928600}

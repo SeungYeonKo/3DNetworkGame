@@ -7,6 +7,8 @@ public class UI_Lobby : MonoBehaviour
 {
     public InputField NicknameInputFieldUI;
     public InputField RoomIDInputFieldUI;
+    public Button MaleCharacterChoice;
+    public Button FemaleCharacterChoice;
 
     public void OnClickMakeRoomButton()
     {
