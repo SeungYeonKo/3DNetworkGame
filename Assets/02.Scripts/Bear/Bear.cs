@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
 //IPunObservable : 포톤 유니티가 관찰하는 대상
-public class Bear : MonoBehaviour, IPunObservable
+public class Bear : MonoBehaviour, IPunObservable, IDamaged
 {
     // 곰 상태 상수(열거형)
     public enum BearState
@@ -17,7 +18,6 @@ public class Bear : MonoBehaviour, IPunObservable
         Trace,
         Return,
         Attack,
-        Hit,
         Death,
     }
 
@@ -116,10 +116,11 @@ public class Bear : MonoBehaviour, IPunObservable
         switch (_state)
         {
             case BearState.Idle: Idle(); break;
-            case BearState.Patrol:Patrol();  break;
+            case BearState.Patrol:Patrol(); break;
             case BearState.Trace:Trace(); break;
-            case BearState.Return: Return();break;
-            case BearState.Attack: Attack();break;
+            case BearState.Return: Return(); break;
+            case BearState.Attack: Attack(); break;
+            case BearState.Death: Death(); break;
         }
     }
 
@@ -249,7 +250,6 @@ public class Bear : MonoBehaviour, IPunObservable
             _state = BearState.Trace;
             return;
         }
-
         // 타겟이 죽거나 공격 범위에서 벗어나면 복귀
         Agent.destination = _targetCharacter.transform.position;
         if (_targetCharacter.State == State.Death || GetDistance(_targetCharacter.transform) > AttackDistance)
@@ -260,7 +260,6 @@ public class Bear : MonoBehaviour, IPunObservable
             _state = BearState.Idle;
             return;
         }
-
         _attackTimer += Time.deltaTime;
         if (_attackTimer >= Stat.AttackCoolTime)
         {
@@ -271,7 +270,39 @@ public class Bear : MonoBehaviour, IPunObservable
         }
     }
 
+    [PunRPC]
+    public void Damaged(int damage, int actorNumber)
+    {
+        if(_state== BearState.Death || !PhotonNetwork.IsMasterClient)
+            {
+                return;
+            }
+        Stat.Health -= damage;
 
+        if(Stat.Health <= 0)
+            {
+                Death();
+            }
+        else
+        {
+            PlayAnimation("Hit");
+        }
+    }
+
+    private void Death()
+    {
+        _state = BearState.Death;
+        PlayAnimation("Death");
+
+        // 3초 후 삭제
+        StartCoroutine(Death_Coroutine()); 
+    }
+
+    private IEnumerator Death_Coroutine()
+    {
+        yield return new WaitForSeconds(5f);
+        PhotonNetwork.Destroy(gameObject);
+    }
 
     // 나와의 거리가 distance보다 짧은 플레이어를 반환
     private Character FindTarget(float distance)
@@ -285,15 +316,14 @@ public class Bear : MonoBehaviour, IPunObservable
             {
                 continue;
             }
-
             if (Vector3.Distance(character.transform.position, myPosition) <= distance)
             {
                 return character;
             }
         }
-
         return null;
     }
+
     private List<Character> FindTargets(float distance)
     {
         _characterList.RemoveAll(c => c == null);
