@@ -226,10 +226,10 @@ public class BearMoveAbility : MonoBehaviour
         // 타겟이 게임에서 나가면 복귀
         if (_targetCharacter == null)
         {
-            Debug.Log("Trace -> Return");
+            Debug.Log("Attack -> Comeback");
             _navMeshAgent.isStopped = false;
             StartPosition = transform.position;
-            _currentState = BearState.Idle;
+            _currentState = BearState.Comeback;
             return;
         }
 
@@ -237,10 +237,10 @@ public class BearMoveAbility : MonoBehaviour
         _navMeshAgent.destination = _targetCharacter.transform.position;
         if (_targetCharacter.State == State.Death || GetDistance(_targetCharacter.transform) > AttackDistance)
         {
-            Debug.Log("Trace -> Return");
+            Debug.Log("Trace -> Comeback");
             _navMeshAgent.isStopped = false;
             StartPosition = transform.position;
-            _currentState = BearState.Idle;
+            _currentState = BearState.Comeback;
             return;
         }
 

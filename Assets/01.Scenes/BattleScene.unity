@@ -4708,7 +4708,7 @@ GameObject:
   - component: {fileID: 437871451}
   m_Layer: 0
   m_Name: BearSpawnPoints
-  m_TagString: BearSpawnPoint
+  m_TagString: PatrolPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5029,7 +5029,7 @@ GameObject:
   - component: {fileID: 474780511}
   m_Layer: 0
   m_Name: BearSpawnPoint2
-  m_TagString: BearSpawnPoint
+  m_TagString: PatrolPoint
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13081,7 +13081,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1140537352
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14150,7 +14150,7 @@ GameObject:
   - component: {fileID: 1227281644}
   m_Layer: 0
   m_Name: BearSpawnPoint3
-  m_TagString: BearSpawnPoint
+  m_TagString: PatrolPoint
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17780,6 +17780,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2620613231809056193, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3700667329854466811, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
       propertyPath: sceneViewId
       value: 1
@@ -17787,14 +17791,6 @@ PrefabInstance:
     - target: {fileID: 4625574346344167160, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
       propertyPath: m_Name
       value: Bear
-      objectReference: {fileID: 0}
-    - target: {fileID: 4735034002617850783, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: HealthSliderUI
-      value: 
-      objectReference: {fileID: 1140537353}
-    - target: {fileID: 4735034002617850783, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
-      propertyPath: Stat.MoveSpeed
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6829810375446965814, guid: 0486d9d341951d641b35c3266c284a9a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -19831,7 +19827,7 @@ RectTransform:
   m_Father: {fileID: 395803392}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -21564,7 +21560,7 @@ GameObject:
   - component: {fileID: 1885555683}
   - component: {fileID: 1885555685}
   m_Layer: 5
-  m_Name: Bear
+  m_Name: BearText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23226,7 +23222,7 @@ GameObject:
   - component: {fileID: 2068040392}
   m_Layer: 0
   m_Name: BearSpawnPoint1
-  m_TagString: BearSpawnPoint
+  m_TagString: PatrolPoint
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

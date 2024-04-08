@@ -7,7 +7,7 @@ TagManager:
   - FollowCamera
   - FxTemporaire
   - MinimapCamera
-  - BearSpawnPoint
+  - PatrolPoint
   layers:
   - Default
   - TransparentFX
