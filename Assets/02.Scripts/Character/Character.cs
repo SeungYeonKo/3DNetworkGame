@@ -1,10 +1,11 @@
-using System.Collections;
 using Cinemachine;
 using ExitGames.Client.Photon;
 using Photon.Pun;
-using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
+using System;
+using System.Collections;
+using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 [RequireComponent(typeof(CharacterMoveAbility))]
 [RequireComponent(typeof(CharacterRotateAbility))]
@@ -12,8 +13,8 @@ using UnityEngine.TextCore.Text;
 [RequireComponent(typeof(CharacterShakeAbility))]
 public class Character : MonoBehaviour, IPunObservable, IDamaged
 {
-    public Stat Stat;
     public PhotonView PhotonView { get; private set; }
+    public Stat Stat;
     public State State { get; private set; } = State.Live;
 
     private Vector3 _receivedPosition;
@@ -27,21 +28,27 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 
         PhotonView = GetComponent<PhotonView>();
 
-        if (PhotonView.IsMine)
-        {
-            UI_CharacterStat.Instance.MyCharacter = this;
-        }
+
     }
 
     private void Start()
     {
-        if (! PhotonView.IsMine)
+        if (PhotonView.IsMine)
+        {
+            UI_CharacterStat.Instance.MyCharacter = this;
+        }
+
+        if (!PhotonView.IsMine)
         {
             return;
         }
+
         SetRandomPositionAndRotation();
 
-        // 커스텀 프로퍼티
+        /*[해쉬테이블]
+        ㄴ int Score     = 0;  
+        ㄴ int KillCount = 0;
+        ㄴ. 캐릭터.커스텀 프로퍼티 = 해쉬테이블<string, object>*/
         ExitGames.Client.Photon.Hashtable hashtable = new ExitGames.Client.Photon.Hashtable();
         hashtable.Add("Score", 0);
         hashtable.Add("KillCount", 0);
@@ -51,25 +58,34 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     [PunRPC]
     public void AddPropertyIntValue(string key, int value)
     {
-        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
         myHashtable[key] = (int)myHashtable[key] + value;
         PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
         GetComponent<CharacterAttackAbility>().RefreshWeaponScale();
     }
     public void SetPropertyIntValue(string key, int value)
     {
-        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
         myHashtable[key] = value;
         PhotonNetwork.LocalPlayer.SetCustomProperties(myHashtable);
         GetComponent<CharacterAttackAbility>().RefreshWeaponScale();
-
     }
     public int GetPropertyIntValue(string key)
     {
-        ExitGames.Client.Photon.Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
+        Hashtable myHashtable = PhotonNetwork.LocalPlayer.CustomProperties;
         return (int)myHashtable[key];
     }
 
+
+
+    private void Update()
+    {
+        if (!PhotonView.IsMine)
+        {
+            //transform.position = Vector3.Lerp(transform.position, _receivedPosition, Time.deltaTime * 20f);
+            //transform.rotation = Quaternion.Slerp(transform.rotation, _receivedRotation, Time.deltaTime * 20f);
+        }
+    }
 
     // 데이터 동기화를 위해 데이터 전송 및 수신 기능을 가진 약속
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -88,7 +104,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         }
         // info는 송수신 성공/실패 여부에 대한 메시지 담겨있다.
     }
-
 
     [PunRPC]
     public void AddLog(string logMessage)
@@ -124,7 +139,7 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 
     private void OnDeath(int actorNumber)
     {
-        _halfScore = GetPropertyIntValue("Score")/2;
+        _halfScore = GetPropertyIntValue("Score") / 2;
 
         // 죽으면 점수를 0점으로 변경
         SetPropertyIntValue("Score", 0);
@@ -164,10 +179,11 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
     [PunRPC]
     private void Death()
     {
-        if(State == State.Death)
+        if (State == State.Death)
         {
             return;
         }
+
         State = State.Death;
 
         GetComponent<Animator>().SetTrigger("Death");
@@ -177,46 +193,35 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         if (PhotonView.IsMine)
         {
             DropItems();
+
             StartCoroutine(Death_Coroutine());
         }
     }
 
     public int Score = 0;
     private void DropItems()
-    {
-        /*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
+    {/*- 70%: Player 스크립트에 점수가 있고 먹으면 점수가 1점씩 오른다. (3~5개 랜덤 생성)
             - (score 변수는 일단 Character에 생성)
         - 20%: 먹으면 체력이 꽉차는 아이템 1개
             - 10%: 먹으면 스태미나 꽉차는 아이템 1개*/
-
         // 팩토리패턴: 객체 생성과 사용 로직을 분리해서 캡슐화하는 패턴
         int randomValue = UnityEngine.Random.Range(0, 100);
-        if (randomValue > 40)      // 60%
+        if (randomValue > 30)      // 70%
         {
             int randomCount = _halfScore / 100;
             for (int i = 0; i < randomCount; ++i)
-                // 코인 타입 랜덤 선택
             {
-                ItemType randomCoinType = GetRandomCoinType();
-                ItemObjectFactory.Instance.RequestCreate(randomCoinType, transform.position);
+                ItemObjectFactory.Instance.RequestCreate(ItemType.Coin, transform.position);
             }
         }
-        else if (randomValue > 20) // 30%
+        else if (randomValue > 10) // 20%
         {
             ItemObjectFactory.Instance.RequestCreate(ItemType.HealthPotion, transform.position);
         }
-        else   // 10%
+        else                       // 10%
         {
             ItemObjectFactory.Instance.RequestCreate(ItemType.StaminaPotion, transform.position);
         }
-    }
-
-    // 코인 타입을 랜덤으로 반환하는 메서드 추가
-    private ItemType GetRandomCoinType()
-    {
-        ItemType[] coinTypes = { ItemType.Coin, ItemType.Coin2, ItemType.Coin3 };
-        int randomIndex = UnityEngine.Random.Range(0, coinTypes.Length);
-        return coinTypes[randomIndex];
     }
 
     private IEnumerator Death_Coroutine()
@@ -235,6 +240,10 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
         GetComponent<CharacterRotateAbility>().SetRandomRotation();
     }
 
+
+
+
+
     [PunRPC]
     private void Live()
     {
@@ -244,4 +253,6 @@ public class Character : MonoBehaviour, IPunObservable, IDamaged
 
         GetComponent<Animator>().SetTrigger("Live");
     }
+
+
 }
