@@ -46,8 +46,8 @@ public class BearMoveAbility : MonoBehaviour
     public float FindDistance = 20f;
 
     // [Attack]
-    private float _attackTimer = 0f;
-    private float AttackDelay = 0.5f;
+    //private float _attackTimer = 0f;
+    //private float AttackDelay = 0.5f;
     public float AttackDistance = 3f;
     
     public const float TOLERANCE = 0.1f;

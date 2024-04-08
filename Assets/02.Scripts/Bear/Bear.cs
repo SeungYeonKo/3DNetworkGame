@@ -265,9 +265,9 @@ public class Bear : MonoBehaviour, IPunObservable
         if (_attackTimer >= Stat.AttackCoolTime)
         {
             transform.LookAt(_targetCharacter.transform);
-
             _attackTimer = 0f;
             RequestPlayAnimation("Attack");
+            //AttackAction();
         }
     }
 
@@ -313,7 +313,6 @@ public class Bear : MonoBehaviour, IPunObservable
                 characters.Add(character);
             }
         }
-
         return characters;
     }
 
@@ -344,7 +343,6 @@ public class Bear : MonoBehaviour, IPunObservable
             {
                 target.PhotonView.RPC("Damaged", RpcTarget.All, Stat.Damage, -1);
             }
-
         }
     }
 
