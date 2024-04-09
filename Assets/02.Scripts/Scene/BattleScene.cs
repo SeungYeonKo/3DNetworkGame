@@ -29,7 +29,10 @@ public class BattleScene : MonoBehaviourPunCallbacks
     {
         _init = true;
         Debug.Log("게임 시작! '0'");
-        PhotonNetwork.Instantiate(nameof(Character), Vector3.zero, Quaternion.identity);
+
+        // Character_Male
+        // Character_Female
+        PhotonNetwork.Instantiate($"Character_{UI_Lobby.SelectedCharacterType}", Vector3.zero, Quaternion.identity);
 
         if (!PhotonNetwork.IsMasterClient)
         {

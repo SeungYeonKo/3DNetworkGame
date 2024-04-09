@@ -12,7 +12,7 @@ public enum CharacterType
 
 public class UI_Lobby : MonoBehaviour
 {
-    public CharacterType SelectedCharacterType = CharacterType.Female;
+    public static CharacterType SelectedCharacterType = CharacterType.Female;
 
     public GameObject MaleCharacter;
     public GameObject FemaleChracter;
